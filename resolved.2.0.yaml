@@ -1,0 +1,4539 @@
+openapi: 3.0.3
+info:
+  title: Customs Declarations
+  description: |
+    # Schemas and examples
+
+    You can download the following zipped archive, which contains XML schemas and examples of the request and response payloads for each of the API endpoints:
+
+    [Schemas and example messages](/api-documentation/docs/api/download/customs-declarations/2.0/wco-declaration-schemas.zip)
+
+    ZIP, 3.5MB last updated 20/03/2026
+  contact: {}
+  version: "2.0"
+servers:
+- url: https://test-api.service.hmrc.gov.uk/
+  description: Sandbox
+- url: https://api.service.hmrc.gov.uk/
+  description: Production
+tags:
+- name: Endpoints
+  description: ""
+paths:
+  /customs/declarations/:
+    post:
+      tags:
+      - Endpoints
+      summary: Submit a Customs Declaration
+      description: |
+        Allows submission of a Customs Declaration.
+
+        **Error scenarios**
+
+        <table>
+          <tbody>
+            <tr>
+              <td><b>Scenario</b></td>
+              <td><b>HTTP Status</b></td>
+              <td><b>Code</b></td>
+            </tr>
+            <tr>
+              <td>Invalid XML Payload</td>
+              <td>400 (Bad Request)</td>
+              <td>BAD_REQUEST</td>
+            </tr>
+            <tr>
+              <td>A firewall rejected the request</td>
+              <td>403 (Payload Forbidden)</td>
+              <td>PAYLOAD_FORBIDDEN</td>
+            </tr>
+            <tr>
+              <td>Internal server error</td>
+              <td>500 (Internal Server Error)</td>
+              <td>INTERNAL_SERVER_ERROR</td>
+            </tr>
+          </tbody>
+        </table>
+
+        For error scenarios that are common across all APIs, and for error formats, see our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
+      operationId: SubmitaCustomsDeclaration
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
+      - name: Content-Type
+        in: header
+        description: Specifies the format of the request body. Must be "application/xml;
+          charset=UTF-8" or the request will be rejected with HTTP status code 415.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/xml; charset=UTF-8
+      - name: X-Badge-Identifier
+        in: header
+        description: |-
+          Represents the end-user who is interacting with the subscribed application.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ABC123
+      - name: X-Submitter-Identifier
+        in: header
+        description: |-
+          The EORI associated with the originating owner of the declaration.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: GB123456789000
+      requestBody:
+        description: ""
+        content:
+          application/xml:
+            examples:
+              objectExample:
+                $ref: '#/components/examples/CustomsDeclarationsRequestBodyExample'
+        required: true
+      responses:
+        "202":
+          description: ""
+          content: {}
+        "400":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Invalid XML Payload
+              examples:
+                objectExample:
+                  summary: BadRequest
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>BAD_REQUEST</code>
+                        <message>Payload is not valid according to schema</message>
+                        <errors>
+                            <error>
+                                <code>xml_validation_error</code>
+                                <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+                          </error>
+                        </errors>
+                    </errorResponse>
+        "403":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: A firewall rejected the request
+              examples:
+                objectExample:
+                  summary: PayloadForbidden
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>PAYLOAD_FORBIDDEN</code>
+                        <message>A firewall rejected the request”</message>
+                    </errorResponse>
+        "500":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Internal server error
+              examples:
+                objectExample:
+                  summary: InternalServerError
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>INTERNAL_SERVER_ERROR</code>
+                        <message>Internal server error</message>
+                    </errorResponse>
+      deprecated: false
+      security:
+      - userRestricted:
+        - write:customs-declaration
+  /customs/declarations/cancellation-requests:
+    post:
+      tags:
+      - Endpoints
+      summary: Submit a cancellation request
+      description: |
+        Allows submission of a cancellation request.
+
+        **Error scenarios**
+
+        <table>
+          <tbody>
+            <tr>
+              <td><b>Scenario</b></td>
+              <td><b>HTTP Status</b></td>
+              <td><b>Code</b></td>
+            </tr>
+            <tr>
+              <td>Invalid XML Payload</td>
+              <td>400 (Bad Request)</td>
+              <td>BAD_REQUEST</td>
+            </tr>
+            <tr>
+              <td>A firewall rejected the request</td>
+              <td>403 (Payload Forbidden)</td>
+              <td>PAYLOAD_FORBIDDEN</td>
+            </tr>
+            <tr>
+              <td>Internal server error</td>
+              <td>500 (Internal Server Error)</td>
+              <td>INTERNAL_SERVER_ERROR</td>
+            </tr>
+          </tbody>
+        </table>
+
+        For error scenarios that are common across all APIs, and for error formats, see our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
+      operationId: Submitacancellationrequest
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
+      - name: Content-Type
+        in: header
+        description: Specifies the format of the request body. Must be "application/xml;
+          charset=UTF-8" or the request will be rejected with HTTP status code 415.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/xml; charset=UTF-8
+      - name: X-Badge-Identifier
+        in: header
+        description: |-
+          Represents the end-user who is interacting with the subscribed application.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ABC123
+      - name: X-Submitter-Identifier
+        in: header
+        description: |-
+          The EORI associated with the originating owner of the declaration.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: GB123456789000
+      requestBody:
+        description: ""
+        content:
+          application/xml:
+            examples:
+              objectExample:
+                $ref: '#/components/examples/CustomsDeclarationsCancellationRequestBodyExample'
+        required: true
+      responses:
+        "202":
+          description: ""
+          content: {}
+        "400":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Invalid XML Payload
+              examples:
+                objectExample:
+                  summary: BadRequest
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>BAD_REQUEST</code>
+                        <message>Payload is not valid according to schema</message>
+                        <errors>
+                            <error>
+                                <code>xml_validation_error</code>
+                                <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+                          </error>
+                        </errors>
+                    </errorResponse>
+        "403":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: A firewall rejected the request
+              examples:
+                objectExample:
+                  summary: PayloadForbidden
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>PAYLOAD_FORBIDDEN</code>
+                        <message>A firewall rejected the request”</message>
+                    </errorResponse>
+        "500":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Internal server error
+              examples:
+                objectExample:
+                  summary: InternalServerError
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>INTERNAL_SERVER_ERROR</code>
+                        <message>Internal server error</message>
+                    </errorResponse>
+      deprecated: false
+      security:
+      - userRestricted:
+        - write:customs-declaration
+  /customs/declarations/file-upload:
+    post:
+      tags:
+      - Endpoints
+      summary: Submit an upload initiate request
+      description: "Obtain a signed URL to upload files to.\n\nThe SuccessRedirect\
+        \ and ErrorRedirect fields are optional.\n\nIf you provide them when you POST\
+        \ your file, then the response will be an automatic redirect. \n\nIf you do\
+        \ not require these redirects for your application, then do not provide these\
+        \ redirect fields.\n\n### File upload workflow\nOnce you receive a successful\
+        \ response from this endpoint, use the information in the response to POST\
+        \ your file to the URL provided.\n\nYou must use multipart encoding (multipart/form-data)\
+        \ NOT application/x-www-form-urlencoded.\n\nThe 'file' field must be the last\
+        \ field in the submitted form.\n\n**Error scenarios**\n\n<table>\n  <tbody>\n\
+        \    <tr>\n      <td><b>Scenario</b></td>\n      <td><b>HTTP Status</b></td>\n\
+        \      <td><b>Code</b></td>\n    </tr>\n    <tr>\n      <td>Invalid XML Payload</td>\n\
+        \      <td>400 (Bad Request)</td>\n      <td>BAD_REQUEST</td>\n    </tr>\n\
+        \    <tr>\n      <td>A firewall rejected the request</td>\n      <td>403 (Payload\
+        \ Forbidden)</td>\n      <td>PAYLOAD_FORBIDDEN</td>\n    </tr>\n    <tr>\n\
+        \      <td>Internal server error</td>\n      <td>500 (Internal Server Error)</td>\n\
+        \      <td>INTERNAL_SERVER_ERROR</td>\n    </tr>\n  </tbody>\n</table>\n\n\
+        For error scenarios that are common across all APIs, and for error formats,\
+        \ see our [reference guide](/api-documentation/docs/reference-guide#errors)\
+        \ for more on errors.\n"
+      operationId: Submitanuploadinitiaterequest
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
+      - name: Content-Type
+        in: header
+        description: Specifies the format of the request body. Must be "application/xml;
+          charset=UTF-8" or the request will be rejected with HTTP status code 415.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/xml; charset=UTF-8
+      - name: X-Badge-Identifier
+        in: header
+        description: |-
+          Represents the end-user who is interacting with the subscribed application.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ABC123
+      - name: X-Eori-Identifier
+        in: header
+        description: |-
+          The EORI associated with the originating owner of the declaration.
+
+          CSPs must have an X-Badge-Identifier or X-Eori-Identifier.
+
+          Must be numbers and letters with a maximum length of 17 characters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: GB123456789000
+      requestBody:
+        description: ""
+        content:
+          application/xml:
+            schema:
+              required:
+              - FileUploadRequest
+              type: object
+              properties:
+                FileUploadRequest:
+                  required:
+                  - DeclarationID
+                  - FileGroupSize
+                  - Files
+                  type: object
+                  properties:
+                    DeclarationID:
+                      maxLength: 22
+                      minLength: 1
+                      type: string
+                      xml:
+                        name: DeclarationID
+                        namespace: hmrc:fileupload
+                        prefix: default
+                        attribute: false
+                        wrapped: false
+                    FileGroupSize:
+                      minimum: 0
+                      exclusiveMinimum: true
+                      type: integer
+                      format: int32
+                      xml:
+                        name: FileGroupSize
+                        namespace: hmrc:fileupload
+                        prefix: default
+                        attribute: false
+                        wrapped: false
+                    Files:
+                      required:
+                      - File
+                      type: object
+                      properties:
+                        File:
+                          type: array
+                          description: ""
+                          xml:
+                            namespace: hmrc:fileupload
+                            prefix: default
+                            attribute: false
+                            wrapped: false
+                          items:
+                            title: FileType
+                            required:
+                            - FileSequenceNo
+                            type: object
+                            properties:
+                              FileSequenceNo:
+                                minimum: 0
+                                exclusiveMinimum: true
+                                type: integer
+                                format: int32
+                                xml:
+                                  name: FileSequenceNo
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              DocumentType:
+                                type: string
+                                xml:
+                                  name: DocumentType
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              SuccessRedirect:
+                                type: string
+                                xml:
+                                  name: SuccessRedirect
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              ErrorRedirect:
+                                type: string
+                                xml:
+                                  name: ErrorRedirect
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                            description: ""
+                            xml:
+                              name: FileType
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                      description: ""
+                  description: ""
+            examples:
+              objectExample:
+                $ref: '#/components/examples/CustomsDeclarationsFileUploadRequestBodyExample'
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - FileUploadResponse
+                type: object
+                properties:
+                  FileUploadResponse:
+                    required:
+                    - Files
+                    type: object
+                    properties:
+                      Files:
+                        required:
+                        - File
+                        type: object
+                        properties:
+                          File:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: File
+                              required:
+                              - Reference
+                              - UploadRequest
+                              type: object
+                              properties:
+                                Reference:
+                                  type: string
+                                  xml:
+                                    name: Reference
+                                    namespace: hmrc:fileupload
+                                    prefix: default
+                                    attribute: false
+                                    wrapped: false
+                                UploadRequest:
+                                  required:
+                                  - Fields
+                                  - Href
+                                  type: object
+                                  properties:
+                                    Href:
+                                      type: string
+                                      xml:
+                                        name: Href
+                                        namespace: hmrc:fileupload
+                                        prefix: default
+                                        attribute: false
+                                        wrapped: false
+                                    Fields:
+                                      type: object
+                                      properties:
+                                        Content-Type:
+                                          type: string
+                                          xml:
+                                            name: Content-Type
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-callback-url:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-callback-url
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-date:
+                                          type: string
+                                          xml:
+                                            name: x-amz-date
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-credential:
+                                          type: string
+                                          xml:
+                                            name: x-amz-credential
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-upscan-initiate-response:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-upscan-initiate-response
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-upscan-initiate-received:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-upscan-initiate-received
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-request-id:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-request-id
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-original-filename:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-original-filename
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-algorithm:
+                                          type: string
+                                          xml:
+                                            name: x-amz-algorithm
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        key:
+                                          type: string
+                                          xml:
+                                            name: key
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        acl:
+                                          type: string
+                                          xml:
+                                            name: acl
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-signature:
+                                          type: string
+                                          xml:
+                                            name: x-amz-signature
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-session-id:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-session-id
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        x-amz-meta-consuming-service:
+                                          type: string
+                                          xml:
+                                            name: x-amz-meta-consuming-service
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        policy:
+                                          type: string
+                                          xml:
+                                            name: policy
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        success_action_redirect:
+                                          type: string
+                                          xml:
+                                            name: success_action_redirect
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                        error_action_redirect:
+                                          type: string
+                                          xml:
+                                            name: error_action_redirect
+                                            namespace: hmrc:fileupload
+                                            prefix: default
+                                            attribute: false
+                                            wrapped: false
+                                      description: ""
+                                  description: ""
+                              description: ""
+                              xml:
+                                name: File
+                                namespace: hmrc:fileupload
+                                prefix: default
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Successful response payload
+              examples:
+                objectExample:
+                  summary: CustomsDeclarationsFileUploadResponse
+                  value: |
+                    <FileUploadResponse xmlns="hmrc:fileupload">
+                      <Files>
+                        <File>
+                          <Reference>63acb547-85d4-4ce7-b702-05115ed99521</Reference>
+                          <UploadRequest>
+                            <Href>https://bucket-name.s3.amazonaws.com</Href>
+                            <Fields>
+                              <x-amz-meta-callback-url>https://some-callback-url</x-amz-meta-callback-url>
+                              <x-amz-date>20200119T122531Z</x-amz-date>
+                              <x-amz-credential>AKIAIOSFODNN7EXAMPLE/20200819/eu-west-2/s3/aws4_request</x-amz-credential>
+                              <x-amz-meta-upscan-initiate-response>2020-01-19T12:25:31.896Z</x-amz-meta-upscan-initiate-response>
+                              <x-amz-meta-upscan-initiate-received>2020-01-19T12:25:31.895Z</x-amz-meta-upscan-initiate-received>
+                              <x-amz-meta-request-id>n/a</x-amz-meta-request-id>
+                              <x-amz-meta-original-filename>${filename}</x-amz-meta-original-filename>
+                              <x-amz-algorithm>AWS4-HMAC-SHA256</x-amz-algorithm>
+                              <key>63acb547-85d4-4ce7-b702-05115ed99521</key>
+                              <acl>private</acl>
+                              <x-amz-signature>4555a985f7651112ed7de834b534ff495f7ea001df3f741a344bfa55aef3ffda</x-amz-signature>
+                              <x-amz-meta-session-id>n/a</x-amz-meta-session-id>
+                              <x-amz-meta-consuming-service>a-service-name</x-amz-meta-consuming-service>
+                              <policy>eyJleHBpcmF0aW9uIjoiMjAyMC0wOC=</policy>
+                              <success_action_redirect>https://success-redirect.com</success_action_redirect>
+                              <error_action_redirect>https://error-redirect.com</error_action_redirect>
+                            </Fields>
+                          </UploadRequest>
+                        </File>
+                        <File>
+                          <Reference>398d2c4d-f28e-471b-9035-1b14c7227ac9</Reference>
+                          <UploadRequest>
+                            <Href>https://bucket-name.s3.amazonaws.com</Href>
+                            <Fields>
+                              <x-amz-meta-callback-url>https://some-callback-url</x-amz-meta-callback-url>
+                              <x-amz-date>20200119T122531Z</x-amz-date>
+                              <x-amz-credential>AKIAI44QH8DHBEXAMPLE/20200819/eu-west-2/s3/aws4_request</x-amz-credential>
+                              <x-amz-meta-upscan-initiate-response>2020-01-19T12:25:31.919Z</x-amz-meta-upscan-initiate-response>
+                              <x-amz-meta-upscan-initiate-received>2020-01-19T12:25:31.918Z</x-amz-meta-upscan-initiate-received>
+                              <x-amz-meta-request-id>n/a</x-amz-meta-request-id>
+                              <x-amz-meta-original-filename>${filename}</x-amz-meta-original-filename>
+                              <x-amz-algorithm>AWS4-HMAC-SHA256</x-amz-algorithm>
+                              <key>398d2c4d-f28e-471b-9035-1b14c7227ac9</key>
+                              <acl>private</acl>
+                              <x-amz-signature>becb1fa1bc49edd06f029c42f5923cf58a8495d6cd376a3b7a518876ede40879</x-amz-signature>
+                              <x-amz-meta-session-id>n/a</x-amz-meta-session-id>
+                              <x-amz-meta-consuming-service>a-service-name</x-amz-meta-consuming-service>
+                              <policy>eyJleHBpcmF0aW9uIjoiMjAyMC0wOC0yNlQ=</policy>
+                            </Fields>
+                          </UploadRequest>
+                        </File>
+                      </Files>
+                    </FileUploadResponse>
+        "400":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Invalid XML Payload
+              examples:
+                objectExample:
+                  summary: BadRequest
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>BAD_REQUEST</code>
+                        <message>Payload is not valid according to schema</message>
+                        <errors>
+                            <error>
+                                <code>xml_validation_error</code>
+                                <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+                          </error>
+                        </errors>
+                    </errorResponse>
+        "403":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: A firewall rejected the request
+              examples:
+                objectExample:
+                  summary: PayloadForbidden
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>PAYLOAD_FORBIDDEN</code>
+                        <message>A firewall rejected the request”</message>
+                    </errorResponse>
+        "500":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Internal server error
+              examples:
+                objectExample:
+                  summary: InternalServerError
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>INTERNAL_SERVER_ERROR</code>
+                        <message>Internal server error</message>
+                    </errorResponse>
+      deprecated: false
+      security:
+      - userRestricted:
+        - write:customs-declaration
+  /customs/declarations/amend:
+    post:
+      tags:
+      - Endpoints
+      summary: Submit a Customs Amend Declaration
+      description: |
+        Allows submission of a Customs Amend Declaration.
+
+        **Error scenarios**
+
+        <table>
+          <tbody>
+            <tr>
+              <td><b>Scenario</b></td>
+              <td><b>HTTP Status</b></td>
+              <td><b>Code</b></td>
+            </tr>
+            <tr>
+              <td>Invalid XML Payload</td>
+              <td>400 (Bad Request)</td>
+              <td>BAD_REQUEST</td>
+            </tr>
+            <tr>
+              <td>A firewall rejected the request</td>
+              <td>403 (Payload Forbidden)</td>
+              <td>PAYLOAD_FORBIDDEN</td>
+            </tr>
+            <tr>
+              <td>Internal server error</td>
+              <td>500 (Internal Server Error)</td>
+              <td>INTERNAL_SERVER_ERROR</td>
+            </tr>
+          </tbody>
+        </table>
+
+        For error scenarios that are common across all APIs, and for error formats, see our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
+      operationId: SubmitaCustomsAmendDeclaration
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
+      - name: Content-Type
+        in: header
+        description: Specifies the format of the request body. Must be "application/xml;
+          charset=UTF-8" or the request will be rejected with HTTP status code 415.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/xml; charset=UTF-8
+      - name: X-Badge-Identifier
+        in: header
+        description: |-
+          Represents the end-user who is interacting with the subscribed application.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ABC123
+      - name: X-Submitter-Identifier
+        in: header
+        description: |-
+          The EORI associated with the originating owner of the declaration.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: GB123456789000
+      requestBody:
+        description: ""
+        content:
+          application/xml:
+            examples:
+              objectExample:
+                $ref: '#/components/examples/CustomsDeclarationsAmendRequestBodyExample'
+        required: true
+      responses:
+        "202":
+          description: ""
+          content: {}
+        "400":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Invalid XML Payload
+              examples:
+                objectExample:
+                  summary: BadRequest
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>BAD_REQUEST</code>
+                        <message>Payload is not valid according to schema</message>
+                        <errors>
+                            <error>
+                                <code>xml_validation_error</code>
+                                <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+                          </error>
+                        </errors>
+                    </errorResponse>
+        "403":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: A firewall rejected the request
+              examples:
+                objectExample:
+                  summary: PayloadForbidden
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>PAYLOAD_FORBIDDEN</code>
+                        <message>A firewall rejected the request”</message>
+                    </errorResponse>
+        "500":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Internal server error
+              examples:
+                objectExample:
+                  summary: InternalServerError
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>INTERNAL_SERVER_ERROR</code>
+                        <message>Internal server error</message>
+                    </errorResponse>
+      deprecated: false
+      security:
+      - userRestricted:
+        - write:customs-declaration
+  /customs/declarations/arrival-notification:
+    post:
+      tags:
+      - Endpoints
+      summary: Submit an Arrival Notification Declaration
+      description: |
+        Allows submission of a Customs Arrival Notification Declaration.
+
+        **Error scenarios**
+
+        <table>
+          <tbody>
+            <tr>
+              <td><b>Scenario</b></td>
+              <td><b>HTTP Status</b></td>
+              <td><b>Code</b></td>
+            </tr>
+            <tr>
+              <td>Invalid XML Payload</td>
+              <td>400 (Bad Request)</td>
+              <td>BAD_REQUEST</td>
+            </tr>
+            <tr>
+              <td>A firewall rejected the request</td>
+              <td>403 (Payload Forbidden)</td>
+              <td>PAYLOAD_FORBIDDEN</td>
+            </tr>
+            <tr>
+              <td>Internal server error</td>
+              <td>500 (Internal Server Error)</td>
+              <td>INTERNAL_SERVER_ERROR</td>
+            </tr>
+          </tbody>
+        </table>
+
+        For error scenarios that are common across all APIs, and for error formats, see our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.
+      operationId: SubmitanArrivalNotificationDeclaration
+      parameters:
+      - name: Accept
+        in: header
+        description: "Specifies the version of the API that you want to call. See\
+          \ [versioning](/api-documentation/docs/reference-guide#versioning)."
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/vnd.hmrc.2.0+xml
+      - name: Content-Type
+        in: header
+        description: Specifies the format of the request body. Must be "application/xml;
+          charset=UTF-8" or the request will be rejected with HTTP status code 415.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: application/xml; charset=UTF-8
+      - name: X-Badge-Identifier
+        in: header
+        description: |-
+          Represents the end-user who is interacting with the subscribed application.
+
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+
+          Must be 6 to 12 characters, consisting of any combination of numeric digits and/or upper-case letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ABC123
+      - name: X-Submitter-Identifier
+        in: header
+        description: |-
+          The EORI associated with the originating owner of the declaration.
+          CSPs must have an X-Badge-Identifier or X-Submitter-Identifier.
+          Must have a maximum length of 17 characters, consisting of any combination of numeric digits and/or letters.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: GB123456789000
+      requestBody:
+        description: ""
+        content:
+          application/xml:
+            examples:
+              objectExample:
+                $ref: '#/components/examples/CustomsDeclarationsArrivalNotificationRequestBodyExample'
+        required: true
+      responses:
+        "202":
+          description: ""
+          content: {}
+        "400":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Invalid XML Payload
+              examples:
+                objectExample:
+                  summary: BadRequest
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>BAD_REQUEST</code>
+                        <message>Payload is not valid according to schema</message>
+                        <errors>
+                            <error>
+                                <code>xml_validation_error</code>
+                                <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+                          </error>
+                        </errors>
+                    </errorResponse>
+        "403":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: A firewall rejected the request
+              examples:
+                objectExample:
+                  summary: PayloadForbidden
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>PAYLOAD_FORBIDDEN</code>
+                        <message>A firewall rejected the request”</message>
+                    </errorResponse>
+        "500":
+          description: ""
+          content:
+            application/xml:
+              schema:
+                required:
+                - errorResponse
+                type: object
+                properties:
+                  errorResponse:
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      errors:
+                        required:
+                        - error
+                        type: object
+                        properties:
+                          error:
+                            type: array
+                            description: ""
+                            xml:
+                              namespace: http://example.com/example.xsd
+                              prefix: tns
+                              attribute: false
+                              wrapped: false
+                            items:
+                              title: errorType
+                              required:
+                              - code
+                              - message
+                              type: object
+                              properties:
+                                code:
+                                  type: string
+                                  xml:
+                                    name: code
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                                message:
+                                  type: string
+                                  xml:
+                                    name: message
+                                    namespace: http://example.com/example.xsd
+                                    prefix: tns
+                                    attribute: false
+                                    wrapped: false
+                              description: ""
+                              xml:
+                                name: errorType
+                                namespace: http://example.com/example.xsd
+                                prefix: tns
+                                attribute: false
+                                wrapped: false
+                        description: ""
+                    description: ""
+                description: Internal server error
+              examples:
+                objectExample:
+                  summary: InternalServerError
+                  value: |
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <errorResponse>
+                        <code>INTERNAL_SERVER_ERROR</code>
+                        <message>Internal server error</message>
+                    </errorResponse>
+      deprecated: false
+      security:
+      - userRestricted:
+        - write:customs-declaration
+components:
+  schemas:
+    errorResponse:
+      title: errorResponse
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+    CustomsDeclarationsAmendresponse400:
+      title: CustomsDeclarationsAmendresponse400
+      required:
+      - errorResponse
+      type: object
+      properties:
+        errorResponse:
+          required:
+          - code
+          - message
+          type: object
+          properties:
+            code:
+              type: string
+              xml:
+                name: code
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            message:
+              type: string
+              xml:
+                name: message
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            errors:
+              required:
+              - error
+              type: object
+              properties:
+                error:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: http://example.com/example.xsd
+                    prefix: tns
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: errorType
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: errorType
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsArrivalNotificationresponse400:
+      title: CustomsDeclarationsArrivalNotificationresponse400
+      required:
+      - errorResponse
+      type: object
+      properties:
+        errorResponse:
+          required:
+          - code
+          - message
+          type: object
+          properties:
+            code:
+              type: string
+              xml:
+                name: code
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            message:
+              type: string
+              xml:
+                name: message
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            errors:
+              required:
+              - error
+              type: object
+              properties:
+                error:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: http://example.com/example.xsd
+                    prefix: tns
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: errorType
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: errorType
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsCancellationRequestsresponse400:
+      title: CustomsDeclarationsCancellationRequestsresponse400
+      required:
+      - errorResponse
+      type: object
+      properties:
+        errorResponse:
+          required:
+          - code
+          - message
+          type: object
+          properties:
+            code:
+              type: string
+              xml:
+                name: code
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            message:
+              type: string
+              xml:
+                name: message
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            errors:
+              required:
+              - error
+              type: object
+              properties:
+                error:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: http://example.com/example.xsd
+                    prefix: tns
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: errorType
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: errorType
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsFileUploadrequest:
+      title: CustomsDeclarationsFileUploadrequest
+      required:
+      - FileUploadRequest
+      type: object
+      properties:
+        FileUploadRequest:
+          required:
+          - DeclarationID
+          - FileGroupSize
+          - Files
+          type: object
+          properties:
+            DeclarationID:
+              maxLength: 22
+              minLength: 1
+              type: string
+              xml:
+                name: DeclarationID
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            FileGroupSize:
+              minimum: 0
+              exclusiveMinimum: true
+              type: integer
+              format: int32
+              xml:
+                name: FileGroupSize
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            Files:
+              required:
+              - File
+              type: object
+              properties:
+                File:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: FileType
+                    required:
+                    - FileSequenceNo
+                    type: object
+                    properties:
+                      FileSequenceNo:
+                        minimum: 0
+                        exclusiveMinimum: true
+                        type: integer
+                        format: int32
+                        xml:
+                          name: FileSequenceNo
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      DocumentType:
+                        type: string
+                        xml:
+                          name: DocumentType
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      SuccessRedirect:
+                        type: string
+                        xml:
+                          name: SuccessRedirect
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      ErrorRedirect:
+                        type: string
+                        xml:
+                          name: ErrorRedirect
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: FileType
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsFileUploadresponse:
+      title: CustomsDeclarationsFileUploadresponse
+      required:
+      - FileUploadResponse
+      type: object
+      properties:
+        FileUploadResponse:
+          required:
+          - Files
+          type: object
+          properties:
+            Files:
+              required:
+              - File
+              type: object
+              properties:
+                File:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: File
+                    required:
+                    - Reference
+                    - UploadRequest
+                    type: object
+                    properties:
+                      Reference:
+                        type: string
+                        xml:
+                          name: Reference
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      UploadRequest:
+                        required:
+                        - Fields
+                        - Href
+                        type: object
+                        properties:
+                          Href:
+                            type: string
+                            xml:
+                              name: Href
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          Fields:
+                            type: object
+                            properties:
+                              Content-Type:
+                                type: string
+                                xml:
+                                  name: Content-Type
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-callback-url:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-callback-url
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-date:
+                                type: string
+                                xml:
+                                  name: x-amz-date
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-credential:
+                                type: string
+                                xml:
+                                  name: x-amz-credential
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-upscan-initiate-response:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-upscan-initiate-response
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-upscan-initiate-received:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-upscan-initiate-received
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-request-id:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-request-id
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-original-filename:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-original-filename
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-algorithm:
+                                type: string
+                                xml:
+                                  name: x-amz-algorithm
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              key:
+                                type: string
+                                xml:
+                                  name: key
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              acl:
+                                type: string
+                                xml:
+                                  name: acl
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-signature:
+                                type: string
+                                xml:
+                                  name: x-amz-signature
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-session-id:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-session-id
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              x-amz-meta-consuming-service:
+                                type: string
+                                xml:
+                                  name: x-amz-meta-consuming-service
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              policy:
+                                type: string
+                                xml:
+                                  name: policy
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              success_action_redirect:
+                                type: string
+                                xml:
+                                  name: success_action_redirect
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                              error_action_redirect:
+                                type: string
+                                xml:
+                                  name: error_action_redirect
+                                  namespace: hmrc:fileupload
+                                  prefix: default
+                                  attribute: false
+                                  wrapped: false
+                            description: ""
+                        description: ""
+                    description: ""
+                    xml:
+                      name: File
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsFileUploadresponse400:
+      title: CustomsDeclarationsFileUploadresponse400
+      required:
+      - errorResponse
+      type: object
+      properties:
+        errorResponse:
+          required:
+          - code
+          - message
+          type: object
+          properties:
+            code:
+              type: string
+              xml:
+                name: code
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            message:
+              type: string
+              xml:
+                name: message
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            errors:
+              required:
+              - error
+              type: object
+              properties:
+                error:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: http://example.com/example.xsd
+                    prefix: tns
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: errorType
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: errorType
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    CustomsDeclarationsresponse400:
+      title: CustomsDeclarationsresponse400
+      required:
+      - errorResponse
+      type: object
+      properties:
+        errorResponse:
+          required:
+          - code
+          - message
+          type: object
+          properties:
+            code:
+              type: string
+              xml:
+                name: code
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            message:
+              type: string
+              xml:
+                name: message
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+            errors:
+              required:
+              - error
+              type: object
+              properties:
+                error:
+                  type: array
+                  description: ""
+                  xml:
+                    namespace: http://example.com/example.xsd
+                    prefix: tns
+                    attribute: false
+                    wrapped: false
+                  items:
+                    title: errorType
+                    required:
+                    - code
+                    - message
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        xml:
+                          name: code
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                      message:
+                        type: string
+                        xml:
+                          name: message
+                          namespace: http://example.com/example.xsd
+                          prefix: tns
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                    xml:
+                      name: errorType
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+              description: ""
+          description: ""
+    errorResponseType:
+      title: errorResponseType
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          xml:
+            name: code
+            namespace: http://example.com/example.xsd
+            prefix: tns
+            attribute: false
+            wrapped: false
+        message:
+          type: string
+          xml:
+            name: message
+            namespace: http://example.com/example.xsd
+            prefix: tns
+            attribute: false
+            wrapped: false
+        errors:
+          required:
+          - error
+          type: object
+          properties:
+            error:
+              type: array
+              description: ""
+              xml:
+                namespace: http://example.com/example.xsd
+                prefix: tns
+                attribute: false
+                wrapped: false
+              items:
+                title: errorType
+                required:
+                - code
+                - message
+                type: object
+                properties:
+                  code:
+                    type: string
+                    xml:
+                      name: code
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+                  message:
+                    type: string
+                    xml:
+                      name: message
+                      namespace: http://example.com/example.xsd
+                      prefix: tns
+                      attribute: false
+                      wrapped: false
+                description: ""
+                xml:
+                  name: errorType
+                  namespace: http://example.com/example.xsd
+                  prefix: tns
+                  attribute: false
+                  wrapped: false
+          description: ""
+      description: ""
+      xml:
+        name: errorResponseType
+        namespace: http://example.com/example.xsd
+        prefix: tns
+        attribute: false
+        wrapped: false
+    errorsType:
+      title: errorsType
+      required:
+      - error
+      type: object
+      properties:
+        error:
+          type: array
+          description: ""
+          xml:
+            namespace: http://example.com/example.xsd
+            prefix: tns
+            attribute: false
+            wrapped: false
+          items:
+            title: errorType
+            required:
+            - code
+            - message
+            type: object
+            properties:
+              code:
+                type: string
+                xml:
+                  name: code
+                  namespace: http://example.com/example.xsd
+                  prefix: tns
+                  attribute: false
+                  wrapped: false
+              message:
+                type: string
+                xml:
+                  name: message
+                  namespace: http://example.com/example.xsd
+                  prefix: tns
+                  attribute: false
+                  wrapped: false
+            description: ""
+            xml:
+              name: errorType
+              namespace: http://example.com/example.xsd
+              prefix: tns
+              attribute: false
+              wrapped: false
+      description: ""
+      xml:
+        name: errorsType
+        namespace: http://example.com/example.xsd
+        prefix: tns
+        attribute: false
+        wrapped: false
+    errorType:
+      title: errorType
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: string
+          xml:
+            name: code
+            namespace: http://example.com/example.xsd
+            prefix: tns
+            attribute: false
+            wrapped: false
+        message:
+          type: string
+          xml:
+            name: message
+            namespace: http://example.com/example.xsd
+            prefix: tns
+            attribute: false
+            wrapped: false
+      description: ""
+      xml:
+        name: errorType
+        namespace: http://example.com/example.xsd
+        prefix: tns
+        attribute: false
+        wrapped: false
+    Fields:
+      title: Fields
+      type: object
+      properties:
+        Content-Type:
+          type: string
+          xml:
+            name: Content-Type
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-callback-url:
+          type: string
+          xml:
+            name: x-amz-meta-callback-url
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-date:
+          type: string
+          xml:
+            name: x-amz-date
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-credential:
+          type: string
+          xml:
+            name: x-amz-credential
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-upscan-initiate-response:
+          type: string
+          xml:
+            name: x-amz-meta-upscan-initiate-response
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-upscan-initiate-received:
+          type: string
+          xml:
+            name: x-amz-meta-upscan-initiate-received
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-request-id:
+          type: string
+          xml:
+            name: x-amz-meta-request-id
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-original-filename:
+          type: string
+          xml:
+            name: x-amz-meta-original-filename
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-algorithm:
+          type: string
+          xml:
+            name: x-amz-algorithm
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        key:
+          type: string
+          xml:
+            name: key
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        acl:
+          type: string
+          xml:
+            name: acl
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-signature:
+          type: string
+          xml:
+            name: x-amz-signature
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-session-id:
+          type: string
+          xml:
+            name: x-amz-meta-session-id
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        x-amz-meta-consuming-service:
+          type: string
+          xml:
+            name: x-amz-meta-consuming-service
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        policy:
+          type: string
+          xml:
+            name: policy
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        success_action_redirect:
+          type: string
+          xml:
+            name: success_action_redirect
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        error_action_redirect:
+          type: string
+          xml:
+            name: error_action_redirect
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+      description: ""
+      xml:
+        name: Fields
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    File:
+      title: File
+      required:
+      - Reference
+      - UploadRequest
+      type: object
+      properties:
+        Reference:
+          type: string
+          xml:
+            name: Reference
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        UploadRequest:
+          required:
+          - Fields
+          - Href
+          type: object
+          properties:
+            Href:
+              type: string
+              xml:
+                name: Href
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            Fields:
+              type: object
+              properties:
+                Content-Type:
+                  type: string
+                  xml:
+                    name: Content-Type
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-callback-url:
+                  type: string
+                  xml:
+                    name: x-amz-meta-callback-url
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-date:
+                  type: string
+                  xml:
+                    name: x-amz-date
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-credential:
+                  type: string
+                  xml:
+                    name: x-amz-credential
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-upscan-initiate-response:
+                  type: string
+                  xml:
+                    name: x-amz-meta-upscan-initiate-response
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-upscan-initiate-received:
+                  type: string
+                  xml:
+                    name: x-amz-meta-upscan-initiate-received
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-request-id:
+                  type: string
+                  xml:
+                    name: x-amz-meta-request-id
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-original-filename:
+                  type: string
+                  xml:
+                    name: x-amz-meta-original-filename
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-algorithm:
+                  type: string
+                  xml:
+                    name: x-amz-algorithm
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                key:
+                  type: string
+                  xml:
+                    name: key
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                acl:
+                  type: string
+                  xml:
+                    name: acl
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-signature:
+                  type: string
+                  xml:
+                    name: x-amz-signature
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-session-id:
+                  type: string
+                  xml:
+                    name: x-amz-meta-session-id
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                x-amz-meta-consuming-service:
+                  type: string
+                  xml:
+                    name: x-amz-meta-consuming-service
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                policy:
+                  type: string
+                  xml:
+                    name: policy
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                success_action_redirect:
+                  type: string
+                  xml:
+                    name: success_action_redirect
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+                error_action_redirect:
+                  type: string
+                  xml:
+                    name: error_action_redirect
+                    namespace: hmrc:fileupload
+                    prefix: default
+                    attribute: false
+                    wrapped: false
+              description: ""
+          description: ""
+      description: ""
+      xml:
+        name: File
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    Files:
+      title: Files
+      required:
+      - File
+      type: object
+      properties:
+        File:
+          type: array
+          description: ""
+          xml:
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+          items:
+            title: File
+            required:
+            - Reference
+            - UploadRequest
+            type: object
+            properties:
+              Reference:
+                type: string
+                xml:
+                  name: Reference
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+              UploadRequest:
+                required:
+                - Fields
+                - Href
+                type: object
+                properties:
+                  Href:
+                    type: string
+                    xml:
+                      name: Href
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                  Fields:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                        xml:
+                          name: Content-Type
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-callback-url:
+                        type: string
+                        xml:
+                          name: x-amz-meta-callback-url
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-date:
+                        type: string
+                        xml:
+                          name: x-amz-date
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-credential:
+                        type: string
+                        xml:
+                          name: x-amz-credential
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-upscan-initiate-response:
+                        type: string
+                        xml:
+                          name: x-amz-meta-upscan-initiate-response
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-upscan-initiate-received:
+                        type: string
+                        xml:
+                          name: x-amz-meta-upscan-initiate-received
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-request-id:
+                        type: string
+                        xml:
+                          name: x-amz-meta-request-id
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-original-filename:
+                        type: string
+                        xml:
+                          name: x-amz-meta-original-filename
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-algorithm:
+                        type: string
+                        xml:
+                          name: x-amz-algorithm
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      key:
+                        type: string
+                        xml:
+                          name: key
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      acl:
+                        type: string
+                        xml:
+                          name: acl
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-signature:
+                        type: string
+                        xml:
+                          name: x-amz-signature
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-session-id:
+                        type: string
+                        xml:
+                          name: x-amz-meta-session-id
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      x-amz-meta-consuming-service:
+                        type: string
+                        xml:
+                          name: x-amz-meta-consuming-service
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      policy:
+                        type: string
+                        xml:
+                          name: policy
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      success_action_redirect:
+                        type: string
+                        xml:
+                          name: success_action_redirect
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      error_action_redirect:
+                        type: string
+                        xml:
+                          name: error_action_redirect
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                    description: ""
+                description: ""
+            description: ""
+            xml:
+              name: File
+              namespace: hmrc:fileupload
+              prefix: default
+              attribute: false
+              wrapped: false
+      description: ""
+      xml:
+        name: Files
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    FilesType:
+      title: FilesType
+      required:
+      - File
+      type: object
+      properties:
+        File:
+          type: array
+          description: ""
+          xml:
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+          items:
+            title: FileType
+            required:
+            - FileSequenceNo
+            type: object
+            properties:
+              FileSequenceNo:
+                minimum: 0
+                exclusiveMinimum: true
+                type: integer
+                format: int32
+                xml:
+                  name: FileSequenceNo
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+              DocumentType:
+                type: string
+                xml:
+                  name: DocumentType
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+              SuccessRedirect:
+                type: string
+                xml:
+                  name: SuccessRedirect
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+              ErrorRedirect:
+                type: string
+                xml:
+                  name: ErrorRedirect
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+            description: ""
+            xml:
+              name: FileType
+              namespace: hmrc:fileupload
+              prefix: default
+              attribute: false
+              wrapped: false
+      description: ""
+      xml:
+        name: FilesType
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    FileType:
+      title: FileType
+      required:
+      - FileSequenceNo
+      type: object
+      properties:
+        FileSequenceNo:
+          minimum: 0
+          exclusiveMinimum: true
+          type: integer
+          format: int32
+          xml:
+            name: FileSequenceNo
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        DocumentType:
+          type: string
+          xml:
+            name: DocumentType
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        SuccessRedirect:
+          type: string
+          xml:
+            name: SuccessRedirect
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        ErrorRedirect:
+          type: string
+          xml:
+            name: ErrorRedirect
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+      description: ""
+      xml:
+        name: FileType
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    FileUploadRequestType:
+      title: FileUploadRequestType
+      required:
+      - DeclarationID
+      - FileGroupSize
+      - Files
+      type: object
+      properties:
+        DeclarationID:
+          maxLength: 22
+          minLength: 1
+          type: string
+          xml:
+            name: DeclarationID
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        FileGroupSize:
+          minimum: 0
+          exclusiveMinimum: true
+          type: integer
+          format: int32
+          xml:
+            name: FileGroupSize
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        Files:
+          required:
+          - File
+          type: object
+          properties:
+            File:
+              type: array
+              description: ""
+              xml:
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+              items:
+                title: FileType
+                required:
+                - FileSequenceNo
+                type: object
+                properties:
+                  FileSequenceNo:
+                    minimum: 0
+                    exclusiveMinimum: true
+                    type: integer
+                    format: int32
+                    xml:
+                      name: FileSequenceNo
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                  DocumentType:
+                    type: string
+                    xml:
+                      name: DocumentType
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                  SuccessRedirect:
+                    type: string
+                    xml:
+                      name: SuccessRedirect
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                  ErrorRedirect:
+                    type: string
+                    xml:
+                      name: ErrorRedirect
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                description: ""
+                xml:
+                  name: FileType
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+          description: ""
+      description: ""
+      xml:
+        name: FileUploadRequestType
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    FileUploadResponse:
+      title: FileUploadResponse
+      required:
+      - Files
+      type: object
+      properties:
+        Files:
+          required:
+          - File
+          type: object
+          properties:
+            File:
+              type: array
+              description: ""
+              xml:
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+              items:
+                title: File
+                required:
+                - Reference
+                - UploadRequest
+                type: object
+                properties:
+                  Reference:
+                    type: string
+                    xml:
+                      name: Reference
+                      namespace: hmrc:fileupload
+                      prefix: default
+                      attribute: false
+                      wrapped: false
+                  UploadRequest:
+                    required:
+                    - Fields
+                    - Href
+                    type: object
+                    properties:
+                      Href:
+                        type: string
+                        xml:
+                          name: Href
+                          namespace: hmrc:fileupload
+                          prefix: default
+                          attribute: false
+                          wrapped: false
+                      Fields:
+                        type: object
+                        properties:
+                          Content-Type:
+                            type: string
+                            xml:
+                              name: Content-Type
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-callback-url:
+                            type: string
+                            xml:
+                              name: x-amz-meta-callback-url
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-date:
+                            type: string
+                            xml:
+                              name: x-amz-date
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-credential:
+                            type: string
+                            xml:
+                              name: x-amz-credential
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-upscan-initiate-response:
+                            type: string
+                            xml:
+                              name: x-amz-meta-upscan-initiate-response
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-upscan-initiate-received:
+                            type: string
+                            xml:
+                              name: x-amz-meta-upscan-initiate-received
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-request-id:
+                            type: string
+                            xml:
+                              name: x-amz-meta-request-id
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-original-filename:
+                            type: string
+                            xml:
+                              name: x-amz-meta-original-filename
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-algorithm:
+                            type: string
+                            xml:
+                              name: x-amz-algorithm
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          key:
+                            type: string
+                            xml:
+                              name: key
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          acl:
+                            type: string
+                            xml:
+                              name: acl
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-signature:
+                            type: string
+                            xml:
+                              name: x-amz-signature
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-session-id:
+                            type: string
+                            xml:
+                              name: x-amz-meta-session-id
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          x-amz-meta-consuming-service:
+                            type: string
+                            xml:
+                              name: x-amz-meta-consuming-service
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          policy:
+                            type: string
+                            xml:
+                              name: policy
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          success_action_redirect:
+                            type: string
+                            xml:
+                              name: success_action_redirect
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                          error_action_redirect:
+                            type: string
+                            xml:
+                              name: error_action_redirect
+                              namespace: hmrc:fileupload
+                              prefix: default
+                              attribute: false
+                              wrapped: false
+                        description: ""
+                    description: ""
+                description: ""
+                xml:
+                  name: File
+                  namespace: hmrc:fileupload
+                  prefix: default
+                  attribute: false
+                  wrapped: false
+          description: ""
+      description: ""
+      xml:
+        name: FileUploadResponse
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+    UploadRequest:
+      title: UploadRequest
+      required:
+      - Fields
+      - Href
+      type: object
+      properties:
+        Href:
+          type: string
+          xml:
+            name: Href
+            namespace: hmrc:fileupload
+            prefix: default
+            attribute: false
+            wrapped: false
+        Fields:
+          type: object
+          properties:
+            Content-Type:
+              type: string
+              xml:
+                name: Content-Type
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-callback-url:
+              type: string
+              xml:
+                name: x-amz-meta-callback-url
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-date:
+              type: string
+              xml:
+                name: x-amz-date
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-credential:
+              type: string
+              xml:
+                name: x-amz-credential
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-upscan-initiate-response:
+              type: string
+              xml:
+                name: x-amz-meta-upscan-initiate-response
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-upscan-initiate-received:
+              type: string
+              xml:
+                name: x-amz-meta-upscan-initiate-received
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-request-id:
+              type: string
+              xml:
+                name: x-amz-meta-request-id
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-original-filename:
+              type: string
+              xml:
+                name: x-amz-meta-original-filename
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-algorithm:
+              type: string
+              xml:
+                name: x-amz-algorithm
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            key:
+              type: string
+              xml:
+                name: key
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            acl:
+              type: string
+              xml:
+                name: acl
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-signature:
+              type: string
+              xml:
+                name: x-amz-signature
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-session-id:
+              type: string
+              xml:
+                name: x-amz-meta-session-id
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            x-amz-meta-consuming-service:
+              type: string
+              xml:
+                name: x-amz-meta-consuming-service
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            policy:
+              type: string
+              xml:
+                name: policy
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            success_action_redirect:
+              type: string
+              xml:
+                name: success_action_redirect
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+            error_action_redirect:
+              type: string
+              xml:
+                name: error_action_redirect
+                namespace: hmrc:fileupload
+                prefix: default
+                attribute: false
+                wrapped: false
+          description: ""
+      description: ""
+      xml:
+        name: UploadRequest
+        namespace: hmrc:fileupload
+        prefix: default
+        attribute: false
+        wrapped: false
+  examples:
+    BadRequestExample:
+      summary: BadRequest
+      value: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <errorResponse>
+            <code>BAD_REQUEST</code>
+            <message>Payload is not valid according to schema</message>
+            <errors>
+                <error>
+                    <code>xml_validation_error</code>
+                    <message>Error at line 13, column 13: no declaration found for element 'unknown'</message>
+              </error>
+            </errors>
+        </errorResponse>
+    PayloadForbiddenExample:
+      summary: PayloadForbidden
+      value: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <errorResponse>
+            <code>PAYLOAD_FORBIDDEN</code>
+            <message>A firewall rejected the request”</message>
+        </errorResponse>
+    InternalServerErrorExample:
+      summary: InternalServerError
+      value: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <errorResponse>
+            <code>INTERNAL_SERVER_ERROR</code>
+            <message>Internal server error</message>
+        </errorResponse>
+    CustomsDeclarationsRequestBodyExample:
+      summary: CustomsDeclarationsRequestBody
+      value: "<md:MetaData xmlns:md=\"urn:wco:datamodel:WCO:DocumentMetaData-DMS:2\"\
+        \n           xmlns=\"urn:wco:datamodel:WCO:DEC-DMS:2\"\n           xmlns:clm63055=\"\
+        urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B\"\
+        \n           xmlns:ds=\"urn:wco:datamodel:WCO:MetaData_DS-DMS:2\"\n      \
+        \     xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n          \
+        \ xsi:schemaLocation=\"urn:wco:datamodel:WCO:DocumentMetaData-DMS:2 ../DocumentMetaData_2_DMS.xsd\
+        \ \">\n<md:WCODataModelVersionCode>3.6</md:WCODataModelVersionCode>\n<md:WCOTypeName>DEC</md:WCOTypeName>\n\
+        <md:ResponsibleCountryCode>GB</md:ResponsibleCountryCode>\n<md:ResponsibleAgencyName>HMRC</md:ResponsibleAgencyName>\n\
+        <md:AgencyAssignedCustomizationVersionCode>v2.1</md:AgencyAssignedCustomizationVersionCode>\n\
+        <Declaration xmlns:clm5ISO42173A=\"urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31\"\
+        \n           xmlns:p1=\"urn:wco:datamodel:WCO:Declaration_DS:DMS:2\"\n   \
+        \        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6\"\
+        \n           xsi:schemaLocation=\"urn:wco:datamodel:WCO:DEC-DMS:2 ../WCO_DEC_2_DMS.xsd\
+        \ \">\n<!--Type D pre-lodged declaration with procedure code 1040, additional\
+        \ procedure code 000. \nNo control,Inventory linked Type D Maritime declaration\
+        \ with one MUCR and one DUCR, arrived, shut and departed at MUCR level.\n\
+        Goods: Straw envelopes for bottles. \nData set category: B1. \nNational Additional\
+        \ Code: VATZ to claim VAT zero-rating.\nScenario steps:\nLoader submits EAL\
+        \ message to CDS for the declared MUCR.\nConsolidator closes the MUCR by sending\
+        \ a CST message to CDS containing the MUCR\nto be closed.\nLoader sends EDL\
+        \ message for MUCR to CDS to notify departure of the consolidation. \nExpected\
+        \ notifications: DMSACC, DMSCLE, DMSEOG, DMSRCV, DMSRCV2, DMSRES. \nEMR Message\
+        \ also expected response from ILE, as MUCR and DUCR consolidated in the declaration.\
+        \ \n-->\n<!--Function Code of 9 to represent an original declaration. -->\n\
+        <FunctionCode>9</FunctionCode>\n<!--DE 2/5: LRN\nThe trader assigned reference\
+        \ to the declaration. -->\n<FunctionalReferenceID>TT_EX01A_HH020301</FunctionalReferenceID>\n\
+        <!-- The IssueDateTime element is not required for any declarations. This\
+        \ was included for internal testing.-->\n<IssueDateTime>\n<p1:DateTimeString\
+        \ formatCode=\"304\">20210302104604+01</p1:DateTimeString>\n</IssueDateTime>\n\
+        <!--DE 1/1: Declaration Type. \nEX to represent an Export declaration. -->\n\
+        <!--DE 1/2: Additional Declaration Type. \nD to represent a Pre lodged declaration.\
+        \ -->\n<TypeCode>EXD</TypeCode>\n<!--DE 1/9: Total Number of Items. -->\n\
+        <GoodsItemQuantity>1</GoodsItemQuantity>\n<!--DE 6/18: Total Packages. -->\n\
+        <TotalPackageQuantity>10</TotalPackageQuantity>\n<!--DE 7/14: Identity of\
+        \ active means of transport crossing the border. -->\n<BorderTransportMeans>\n\
+        <ID>CSCLGLOBE</ID>\n<IdentificationTypeCode>11</IdentificationTypeCode>\n\
+        <!--DE 7/15: Nationality of active means of transport crossing the border.\n\
+        In this the case country code for GB. -->\n<RegistrationNationalityCode>GB</RegistrationNationalityCode>\n\
+        <!--DE 7/4: Mode of Transport at the Border.\nModeCode of 1 to represent Maritime/Sea\
+        \ transport. -->\n<ModeCode>1</ModeCode>\n</BorderTransportMeans>\n<Consignment>\n\
+        <!--DE 3/32: Carrier Identification number. \nThis is Security and Safety\
+        \ Data. -->\n<Carrier>\n<ID>GB025115100010</ID>\n</Carrier>\n<!--DE 4/2: Transport\
+        \ charges method of payment. \nD indicating other e.g. direct debit to cash\
+        \ account. \nThis is Security and Safety Data. -->\n<Freight>\n<PaymentMethodCode>D</PaymentMethodCode>\n\
+        </Freight>\n<!--DE 5/18: Country of Routing Codes. \nGBCAUS Routing from GB\
+        \ to US via Canada. \nThis is Security and Safety Data. -->\n<Itinerary>\n\
+        <SequenceNumeric>1</SequenceNumeric>\n<RoutingCountryCode>GB</RoutingCountryCode>\n\
+        </Itinerary>\n<Itinerary>\n<SequenceNumeric>2</SequenceNumeric>\n<RoutingCountryCode>CA</RoutingCountryCode>\n\
+        </Itinerary>\n<Itinerary>\n<SequenceNumeric>3</SequenceNumeric>\n<RoutingCountryCode>US</RoutingCountryCode>\n\
+        </Itinerary>\n</Consignment>\n<!--DE 3/18: Declarant Identification Number.\
+        \ \nEORI number of the Declarant. -->\n<Declarant>\n<ID>GB427168118378</ID>\n\
+        </Declarant>\n<!--DE 5/12 Customs Office of Exit. \nIndicating Dover. -->\n\
+        <ExitOffice>\n<ID>GB000040</ID>\n</ExitOffice>\n<!--DE 3/2: Exporter Identification\
+        \ Number. \nEORI number of the Exporter, the same as 3/18. -->\n<Exporter>\n\
+        <ID>GB427168118378</ID>\n</Exporter>\n<GoodsShipment>\n<!--DE 3/9: Consignee\
+        \ Name and Address.\n(Mandatory when DE 3/10 is not completed). \nThis is\
+        \ Security and Safety Data. -->\n<Consignee>\n<Name>Packings Import Incorporated</Name>\n\
+        <Address>\n<CityName>New York</CityName>\n<CountryCode>US</CountryCode>\n\
+        <Line>1 Bags Avenue</Line>\n<PostcodeID>NY1 234</PostcodeID>\n</Address>\n\
+        </Consignee>\n<Consignment>\n<!--DE 7/2: Container. \n1 to indicate that the\
+        \ goods are transported in containers. -->\n<ContainerCode>1</ContainerCode>\n\
+        <!--DE 7/7: Identity of the means of transport at departure. \n(In this scenario,\
+        \ 11 indicating name of the seagoing vessel). -->\n<DepartureTransportMeans>\n\
+        <ID>CSCLGLOBE</ID>\n<IdentificationTypeCode>11</IdentificationTypeCode>\n\
+        </DepartureTransportMeans>\n<GoodsLocation>\n<!--DE 5/23: Location of Goods\
+        \ - Identification of location.\nID to give a unique position of the location.\
+        \ \nDVRDVRDVR Indicating Dover. -->\n<Name>DVRDOVDVR</Name>\n<!--DE 5/23:\
+        \ Location of Goods - Type of location.\nA in this scenario to represent that\
+        \ it is a designated location. -->\n<TypeCode>A</TypeCode>\n<Address>\n<!--DE\
+        \ 5/23: Location of Goods - Qualifier of the identification.\nType of ID of\
+        \ the Location - U in this scenario for UN/LOCODE. -->\n<TypeCode>U</TypeCode>\n\
+        <!--DE 5/23: Location of Goods - Country.\nCountry code of the country where\
+        \ the goods may be examined, GB in this scenario. -->\n<CountryCode>GB</CountryCode>\n\
+        </Address>\n</GoodsLocation>\n<TransportEquipment>\n<!--DE 7/10: Container\
+        \ Identification Number. -->\n<SequenceNumeric>1</SequenceNumeric>\n<ID>CONU1234567</ID>\n\
+        <!--DE 7/18: Seal number. \nThis is Security and Safety Data. -->\n<Seal>\n\
+        <SequenceNumeric>1</SequenceNumeric>\n<ID>333</ID>\n</Seal>\n</TransportEquipment>\n\
+        </Consignment>\n<Destination>\n<!--DE 5/8: Country of Destination Code.\n\
+        In this case US. -->\n<CountryCode>US</CountryCode>\n</Destination>\n<!--DE\
+        \ 5/14: Country of Dispatch/Export Code. \nCountry code for the country from\
+        \ which the goods were originally dispatched, in this case GB. -->\n<ExportCountry>\n\
+        <ID>GB</ID>\n</ExportCountry>\n<GovernmentAgencyGoodsItem>\n<!--DE 1/6: Goods\
+        \ Item Number. -->\n<SequenceNumeric>1</SequenceNumeric>\n<!--DE 8/6: Statistical\
+        \ Value. \nFor the goods item in GBP (£ sterling), irrespective of the currency\
+        \ used in Invoice Currency. -->\n<StatisticalValueAmount currencyID=\"GBP\"\
+        >200</StatisticalValueAmount>\n<!--DE 8/5 Nature of Transaction. \nEnter,\
+        \ a 2-digit code (second digit is optional).\nThe single digit codes listed\
+        \ in column A of the table provided for under Article 10(2) of Commission\
+        \ Regulation (EC) No 113/2010 shall be used.\nMember States may also provide\
+        \ for a second digit from the list in column B of that table to be collected.\n\
+        In this case: \n- First digit (1) represents 'Transactions involving actual\
+        \ or intended transfer of ownership \nfrom residents to non-residents against\
+        \ financial or other compensation'. \n- Second digit (1) represents 'Outright\
+        \ purchase/sale'. -->\n<TransactionNatureCode>11</TransactionNatureCode>\n\
+        <!--DE 2/2: Additional Information. \n00400 Indicating Self representation\
+        \ i.e. the declarant and the exporter are the same party. -->\n<AdditionalInformation>\n\
+        <StatementCode>00400</StatementCode>\n<StatementDescription>EXPORTER</StatementDescription>\n\
+        </AdditionalInformation>\n<Commodity>\n<!--DE 6/8: Description of Goods. -->\n\
+        <Description>Straw envelopes for bottles, made of certified staw in wraps\
+        \ of 1000</Description>\n<Classification>\n<!--DE 6/14: Commodity Code - Combined\
+        \ Nomenclature Code. -->\n<ID>46021910</ID>\n<IdentificationTypeCode>TSP</IdentificationTypeCode>\n\
+        </Classification>\n<Classification>\n<!--DE 6/17: National Additional Code.\n\
+        VATZ to represent VAT 0% duty rate.\nNote that when code VATZ is used the\
+        \ requirements for VAT zero-rating in the Export Declaration Completion Guide\
+        \ Appendix 20 and VAT Notice 703 will apply. -->\n<ID>VATZ</ID>\n<IdentificationTypeCode>GN</IdentificationTypeCode>\n\
+        </Classification>\n<GoodsMeasure>\n<!--DE 6/5: Gross Mass.\nWeight of the\
+        \ goods in kilograms including packaging. -->\n<GrossMassMeasure>10</GrossMassMeasure>\n\
+        <!--DE 6/1: Net Mass.\nWeight of the goods in kilograms without any packaging.\
+        \ -->\n<NetNetWeightMeasure>5</NetNetWeightMeasure>\n</GoodsMeasure>\n</Commodity>\n\
+        <GovernmentProcedure>\n<!--DE 1/10: Procedure. \nRequested Procedure of 10\
+        \ 40 indicating permanent export of goods in free circulation and home use.\
+        \ -->\n<CurrentCode>10</CurrentCode>\n<PreviousCode>40</PreviousCode>\n</GovernmentProcedure>\n\
+        <GovernmentProcedure>\n<!--DE 1/11: Additional Procedure Code. \n000 to indicate\
+        \ no additional procedure. -->\n<CurrentCode>000</CurrentCode>\n</GovernmentProcedure>\n\
+        <Packaging>\n<SequenceNumeric>1</SequenceNumeric>\n<!--DE 6/11: Shipping Marks.\
+        \ -->\n<MarksNumbersID>2379261ETT</MarksNumbersID>\n<!--DE 6/10: Number of\
+        \ Packages. \nIn this case 10. -->\n<QuantityQuantity>10</QuantityQuantity>\n\
+        <!--DE 6/9: Type of Packages.\nPK to represent standard packaging unit. -->\n\
+        <TypeCode>PK</TypeCode>\n</Packaging>\n</GovernmentAgencyGoodsItem>\n<!--DE\
+        \ 2/1: Simplified Declaration/ Previous Documents. \nTo show the DUCR assigned\
+        \ to the consignment.\nThis is a mandatory field. -->\n<PreviousDocument>\n\
+        <CategoryCode>Z</CategoryCode>\n<ID>1GB427168118378-0203N1</ID>\n<TypeCode>DCR</TypeCode>\n\
+        <LineNumeric>1</LineNumeric>\n</PreviousDocument>\n<!--DE 2/1: Simplified\
+        \ Declaration/ Previous Documents. \nTo show the MUCR assigned to the consignment.\
+        \ -->\n<PreviousDocument>\n<CategoryCode>Z</CategoryCode>\n<ID>GB/123456789012-0203N1</ID>\n\
+        <TypeCode>MCR</TypeCode>\n</PreviousDocument>\n</GoodsShipment>\n</Declaration>\n\
+        </md:MetaData>\n"
+    CustomsDeclarationsCancellationRequestBodyExample:
+      summary: CustomsDeclarationsCancellationRequestBody
+      value: |
+        <md:MetaData
+              xmlns="urn:wco:datamodel:WCO:DEC-DMS:2"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B"
+              xmlns:ds="urn:wco:datamodel:WCO:MetaData_DS-DMS:2"
+              xmlns:md="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2"
+              xsi:schemaLocation="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2 ../DocumentMetaData_2_DMS.xsd "
+            >
+            <md:WCODataModelVersionCode>3.6</md:WCODataModelVersionCode>
+            <md:WCOTypeName>DEC</md:WCOTypeName>
+            <md:ResponsibleCountryCode>GB</md:ResponsibleCountryCode>
+            <md:ResponsibleAgencyName>HMRC</md:ResponsibleAgencyName>
+            <md:AgencyAssignedCustomizationVersionCode>v2.1</md:AgencyAssignedCustomizationVersionCode>
+                    <Declaration xsi:schemaLocation="urn:wco:datamodel:WCO:DEC-DMS:2 ../WCO_DEC_2_DMS.xsd " xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31" xmlns:p1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6">
+                      <!--This is an example of a cancellation message that has been applied to a declaration-->
+
+                       <!--Function Code of 13 to represent Request (Additional Message)-->
+           <FunctionCode>13</FunctionCode>
+           <!--The trader assigned reference to the additional message.
+                       Note that this reference is independent of the declaration.-->
+                       <FunctionalReferenceID>TT_IM10b_v4.9_0909_01</FunctionalReferenceID>
+                       <!--Declaration ID of the corresponding Declaration to be cancelled-->
+           <ID>20GBDPQ8A31WX1XXR5</ID>
+           <!--Defines the type of additional message - in this scenario, INV
+                       to indicate that this additional message is a cancellation-->
+                       <TypeCode>INV</TypeCode>
+                       <AdditionalInformation>
+           <!--Textual description of the reason for cancellation-->
+                    <StatementDescription>Declaration is no longer required</StatementDescription>
+        <!--The type of Additional Information. 'AES' should always be used
+                          for Cancellations and Amendments to indicate a free text reason
+                          is being provided.-->
+                          <StatementTypeCode>AES</StatementTypeCode>
+                          <Pointer>
+                             <SequenceNumeric>1</SequenceNumeric>
+                             <DocumentSectionCode>42A</DocumentSectionCode>
+                          </Pointer>
+                          <Pointer>
+                             <SequenceNumeric>1</SequenceNumeric>
+                             <DocumentSectionCode>06A</DocumentSectionCode>
+                          </Pointer>
+                       </AdditionalInformation>
+                       <Amendment>
+           <!--Used to indicate the reason for the amendment - in this scenario,
+                       a code of 1 to indicate that the Declaration is to be Cancelled. -->
+                          <ChangeReasonCode>1</ChangeReasonCode>
+                       </Amendment>
+                    </Declaration>
+                             </md:MetaData>
+    CustomsDeclarationsFileUploadRequestBodyExample:
+      summary: CustomsDeclarationsFileUploadRequestBody
+      value: |
+        <FileUploadRequest xmlns="hmrc:fileupload" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <DeclarationID>DEC123</DeclarationID>
+        <FileGroupSize>2</FileGroupSize>
+        <Files>
+          <File>
+            <FileSequenceNo>1</FileSequenceNo>
+            <DocumentType>Certificate of Origin</DocumentType>
+            <SuccessRedirect>https://success-redirect.com</SuccessRedirect>
+            <ErrorRedirect>https://error-redirect.com</ErrorRedirect>
+          </File>
+          <File>
+            <FileSequenceNo>2</FileSequenceNo>
+            <DocumentType>Licence</DocumentType>
+          </File>
+        </Files>
+        </FileUploadRequest>
+    CustomsDeclarationsAmendRequestBodyExample:
+      summary: CustomsDeclarationsAmendRequestBody
+      value: |
+        <md:MetaData
+            xmlns="urn:wco:datamodel:WCO:DEC-DMS:2"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B"
+            xmlns:ds="urn:wco:datamodel:WCO:MetaData_DS-DMS:2"
+            xmlns:md="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2"
+            xsi:schemaLocation="urn:wco:datamodel:WCO:DocumentMetaData-DMS:2 ../DocumentMetaData_2_DMS.xsd "
+        >
+        <md:WCODataModelVersionCode>3.6</md:WCODataModelVersionCode>
+        <md:WCOTypeName>DEC</md:WCOTypeName>
+        <md:ResponsibleCountryCode>GB</md:ResponsibleCountryCode>
+        <md:ResponsibleAgencyName>HMRC</md:ResponsibleAgencyName>
+        <md:AgencyAssignedCustomizationVersionCode>v2.1</md:AgencyAssignedCustomizationVersionCode>
+        <Declaration
+              xmlns="urn:wco:datamodel:WCO:DEC-DMS:2"
+              xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31"
+              xmlns:clm63055="urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B"
+              xmlns:p1="urn:wco:datamodel:WCO:Declaration_DS:DMS:2"
+              xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="urn:wco:datamodel:WCO:DEC-DMS:2 ../WCO_DEC_2_DMS.xsd "
+        >
+
+        <!--Function Code of 13 to represent Request (Additional Message)-->
+        <FunctionCode>13</FunctionCode>
+        <!--The trader assigned reference to the additional message.
+        Note that this reference is independent of the declaration.-->
+        <FunctionalReferenceID>TT_IM02b_1803_002</FunctionalReferenceID>
+        <!--Declaration ID of the corresponding Declaration to be amended-->
+        <ID>20GB32VVZI0YMFGVR0</ID>
+        <!--Defines the type of additional message - in this scenario, COR to indicate that this additional message is an amendment-->
+        <TypeCode>COR</TypeCode>
+        <AdditionalInformation>
+        <!--Textual description of the reason for amendment-->
+        <StatementDescription>Amending item price as a mistake was made on the declaration.</StatementDescription>
+        <!--The type of Additional Information. 'AES' should always be used for Cancellations and Amendments to indicate a free text
+         reason is being provided.-->
+        <StatementTypeCode>AES</StatementTypeCode>
+        <!--The two pointer elements below point to the Declaration (42A) and the Amendment (06A) in the Declaration (which can be
+         seen below).
+          This is so that the textual description can be linked to its corresponding amendment reason code.-->
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>42A</DocumentSectionCode>
+        </Pointer>
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>06A</DocumentSectionCode>
+        </Pointer>
+        </AdditionalInformation>
+        <!--Details of the amendment to be made to the Declaration-->
+        <Amendment>
+        <!--Used to indicate the reason for the amendment - in this scenario, a code of 21 to indicate that a value is being amended.-->
+        <ChangeReasonCode>21</ChangeReasonCode>
+        <!--Pointers describe the declaration tree down to the part of the Declaration which needs to be amended as follows:
+              Declaration (42A) -> GoodsShipment (67A) -> GovernmentAgencyGoodsItem (68A) -> Commodity (23A) -> InvoiceLine (79A - tag 112
+         for ItemChargeAmount)-->
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>42A</DocumentSectionCode>
+        </Pointer>
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>67A</DocumentSectionCode>
+        </Pointer>
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>68A</DocumentSectionCode>
+        </Pointer>
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>23A</DocumentSectionCode>
+        </Pointer>
+        <Pointer>
+        <SequenceNumeric>1</SequenceNumeric>
+        <DocumentSectionCode>79A</DocumentSectionCode>
+        <TagID>112</TagID>
+        </Pointer>
+        </Amendment>
+        <!--The below details the Declaration data that is being amended. As described by the pointer structure above,
+         the information below shows that the item price is being amended and the new value of 999 is included below.-->
+        <GoodsShipment>
+        <GovernmentAgencyGoodsItem>
+        <SequenceNumeric>1</SequenceNumeric>
+        <Commodity>
+        <InvoiceLine>
+        <ItemChargeAmount currencyID="GBP">999</ItemChargeAmount>
+        </InvoiceLine>
+        </Commodity>
+        </GovernmentAgencyGoodsItem>
+        </GoodsShipment>
+        </Declaration>
+        </md:MetaData>
+    CustomsDeclarationsArrivalNotificationRequestBodyExample:
+      summary: CustomsDeclarationsArrivalNotificationRequestBody
+      value: "<md:MetaData \nxmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\
+        \ \nxmlns:md=\"urn:wco:datamodel:WCO:DocumentMetaData-DMS:2\" \nxmlns:clm63055=\"\
+        urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B\"\
+        \ \nxmlns:ds=\"urn:wco:datamodel:WCO:MetaData_DS-DMS:2\" \nxsi:schemaLocation=\"\
+        urn:wco:datamodel:WCO:DocumentMetaData-DMS:2 ../DocumentMetaData_2_DMS.xsd\
+        \ \" \nxmlns=\"urn:wco:datamodel:WCO:DEC-DMS:2\"\n\n>\n<md:WCODataModelVersionCode>3.6</md:WCODataModelVersionCode>\n\
+        <md:WCOTypeName>DEC</md:WCOTypeName>\n<md:ResponsibleCountryCode>GB</md:ResponsibleCountryCode>\n\
+        <md:ResponsibleAgencyName>HMRC</md:ResponsibleAgencyName>\n<md:AgencyAssignedCustomizationVersionCode>v2.1\
+        \ </md:AgencyAssignedCustomizationVersionCode>\n\n<Declaration \nxmlns:xsi=\"\
+        http://www.w3.org/2001/XMLSchema-instance\" \nxmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:6\"\
+        \ \nxmlns:p1=\"urn:wco:datamodel:WCO:Declaration_DS:DMS:2\" \nxmlns:clm63055=\"\
+        urn:un:unece:uncefact:codelist:standard:UNECE:AgencyIdentificationCode:D12B\"\
+        \ \nxmlns:clm5ISO42173A=\"urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31\"\
+        \ \nxsi:schemaLocation=\"urn:wco:datamodel:WCO:DEC-DMS:2 ../WCO_DEC_2_DMS.xsd\
+        \ \" xmlns=\"urn:wco:datamodel:WCO:DEC-DMS:2\">\n<FunctionCode>13</FunctionCode>\n\
+        <FunctionalReferenceID>TT_IM10a_1102_001</FunctionalReferenceID>\n<ID>21GB1NEXFX6SU9C4R1</ID>\n\
+        <TypeCode>GPR</TypeCode>\n<!--Note that Submitter/ID should not be needed\
+        \ because it is not a mandatory field for Goods Arrival. -->\n<Submitter>\n\
+        <ID>GB553202734852</ID>\n</Submitter>\n</Declaration>\n</md:MetaData>\n"
+    CustomsDeclarationsFileUploadResponseExample:
+      summary: CustomsDeclarationsFileUploadResponse
+      value: |
+        <FileUploadResponse xmlns="hmrc:fileupload">
+          <Files>
+            <File>
+              <Reference>63acb547-85d4-4ce7-b702-05115ed99521</Reference>
+              <UploadRequest>
+                <Href>https://bucket-name.s3.amazonaws.com</Href>
+                <Fields>
+                  <x-amz-meta-callback-url>https://some-callback-url</x-amz-meta-callback-url>
+                  <x-amz-date>20200119T122531Z</x-amz-date>
+                  <x-amz-credential>AKIAIOSFODNN7EXAMPLE/20200819/eu-west-2/s3/aws4_request</x-amz-credential>
+                  <x-amz-meta-upscan-initiate-response>2020-01-19T12:25:31.896Z</x-amz-meta-upscan-initiate-response>
+                  <x-amz-meta-upscan-initiate-received>2020-01-19T12:25:31.895Z</x-amz-meta-upscan-initiate-received>
+                  <x-amz-meta-request-id>n/a</x-amz-meta-request-id>
+                  <x-amz-meta-original-filename>${filename}</x-amz-meta-original-filename>
+                  <x-amz-algorithm>AWS4-HMAC-SHA256</x-amz-algorithm>
+                  <key>63acb547-85d4-4ce7-b702-05115ed99521</key>
+                  <acl>private</acl>
+                  <x-amz-signature>4555a985f7651112ed7de834b534ff495f7ea001df3f741a344bfa55aef3ffda</x-amz-signature>
+                  <x-amz-meta-session-id>n/a</x-amz-meta-session-id>
+                  <x-amz-meta-consuming-service>a-service-name</x-amz-meta-consuming-service>
+                  <policy>eyJleHBpcmF0aW9uIjoiMjAyMC0wOC=</policy>
+                  <success_action_redirect>https://success-redirect.com</success_action_redirect>
+                  <error_action_redirect>https://error-redirect.com</error_action_redirect>
+                </Fields>
+              </UploadRequest>
+            </File>
+            <File>
+              <Reference>398d2c4d-f28e-471b-9035-1b14c7227ac9</Reference>
+              <UploadRequest>
+                <Href>https://bucket-name.s3.amazonaws.com</Href>
+                <Fields>
+                  <x-amz-meta-callback-url>https://some-callback-url</x-amz-meta-callback-url>
+                  <x-amz-date>20200119T122531Z</x-amz-date>
+                  <x-amz-credential>AKIAI44QH8DHBEXAMPLE/20200819/eu-west-2/s3/aws4_request</x-amz-credential>
+                  <x-amz-meta-upscan-initiate-response>2020-01-19T12:25:31.919Z</x-amz-meta-upscan-initiate-response>
+                  <x-amz-meta-upscan-initiate-received>2020-01-19T12:25:31.918Z</x-amz-meta-upscan-initiate-received>
+                  <x-amz-meta-request-id>n/a</x-amz-meta-request-id>
+                  <x-amz-meta-original-filename>${filename}</x-amz-meta-original-filename>
+                  <x-amz-algorithm>AWS4-HMAC-SHA256</x-amz-algorithm>
+                  <key>398d2c4d-f28e-471b-9035-1b14c7227ac9</key>
+                  <acl>private</acl>
+                  <x-amz-signature>becb1fa1bc49edd06f029c42f5923cf58a8495d6cd376a3b7a518876ede40879</x-amz-signature>
+                  <x-amz-meta-session-id>n/a</x-amz-meta-session-id>
+                  <x-amz-meta-consuming-service>a-service-name</x-amz-meta-consuming-service>
+                  <policy>eyJleHBpcmF0aW9uIjoiMjAyMC0wOC0yNlQ=</policy>
+                </Fields>
+              </UploadRequest>
+            </File>
+          </Files>
+        </FileUploadResponse>
+  securitySchemes:
+    userRestricted:
+      type: oauth2
+      description: |
+        HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
+        See https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints for details.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:customs-declaration: write:customs-declaration
