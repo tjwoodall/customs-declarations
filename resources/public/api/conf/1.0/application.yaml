@@ -162,7 +162,7 @@ paths:
                     attribute: false
                     wrapped: false
       security:
-        - userRestricted: [ "write:customs-declaration" ]
+        - User-Restricted: [ "write:customs-declaration" ]
       deprecated: false
   /customs/declarations/cancellation-requests:
     post:
@@ -308,7 +308,7 @@ paths:
                     attribute: false
                     wrapped: false
       security:
-        - userRestricted: [ "write:customs-declaration" ]
+        - User-Restricted: [ "write:customs-declaration" ]
       deprecated: false
   /customs/declarations/file-upload:
     post:
@@ -486,7 +486,7 @@ paths:
                     attribute: false
                     wrapped: false
       security:
-        - userRestricted: [ "write:customs-declaration" ]
+        - User-Restricted: [ "write:customs-declaration" ]
       deprecated: false
   /customs/declarations/amend:
     post:
@@ -632,7 +632,7 @@ paths:
                     attribute: false
                     wrapped: false
       security:
-        - userRestricted: [ "write:customs-declaration" ]
+        - User-Restricted: [ "write:customs-declaration" ]
       deprecated: false
   /customs/declarations/arrival-notification:
     post:
@@ -776,11 +776,11 @@ paths:
                     attribute: false
                     wrapped: false
       security:
-        - userRestricted: [ "write:customs-declaration" ]
+        - User-Restricted: [ "write:customs-declaration" ]
       deprecated: false
 components:
   securitySchemes:
-    userRestricted:
+    User-Restricted:
       type: oauth2
       description: |
         HMRC supports OAuth 2.0 for authenticating user restricted API requests using an OAuth 2.0 Bearer Token in the AUTHORIZATION header.
