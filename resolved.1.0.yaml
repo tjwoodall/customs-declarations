@@ -112,7 +112,7 @@ paths:
           application/xml:
             examples:
               objectExample:
-                $ref: '#/components/examples/CustomsDeclarationsRequestBodyExample'
+                $ref: "#/components/examples/CustomsDeclarationsRequestBodyExample"
         required: true
       responses:
         "202":
@@ -478,7 +478,7 @@ paths:
           application/xml:
             examples:
               objectExample:
-                $ref: '#/components/examples/CustomsDeclarationsCancellationRequestBodyExample'
+                $ref: "#/components/examples/CustomsDeclarationsCancellationRequestBodyExample"
         required: true
       responses:
         "202":
@@ -928,7 +928,7 @@ paths:
                   description: ""
             examples:
               objectExample:
-                $ref: '#/components/examples/CustomsDeclarationsFileUploadRequestBodyExample'
+                $ref: "#/components/examples/CustomsDeclarationsFileUploadRequestBodyExample"
         required: true
       responses:
         "200":
@@ -1552,7 +1552,7 @@ paths:
           application/xml:
             examples:
               objectExample:
-                $ref: '#/components/examples/CustomsDeclarationsAmendRequestBodyExample'
+                $ref: "#/components/examples/CustomsDeclarationsAmendRequestBodyExample"
         required: true
       responses:
         "202":
@@ -1916,7 +1916,7 @@ paths:
           application/xml:
             examples:
               objectExample:
-                $ref: '#/components/examples/CustomsDeclarationsArrivalNotificationRequestBodyExample'
+                $ref: "#/components/examples/CustomsDeclarationsArrivalNotificationRequestBodyExample"
         required: true
       responses:
         "202":
